@@ -24,8 +24,10 @@ public class Start
             for (int i=0;i<pngFiles.size();i++) {
                 Process h1 =
                         Runtime.getRuntime().exec("C:\\WINDOWS\\system32\\mspaint.exe " + directory + pngFiles.get(i));
-                BufferedReader stdError = new BufferedReader(new
-                        InputStreamReader(h1.getErrorStream()));
+                StreamGrabber errorGrabber = new StreamGrabber(h1.getErrorStream());
+                StreamGrabber outputGrabber = new StreamGrabber(h1.getInputStream());
+                errorGrabber.start();
+                outputGrabber.start();
 
                 try {
                     Thread.sleep(1000);
@@ -34,7 +36,6 @@ public class Start
                 {}
                 if (!isAlive(h1)) {
                     Logger.log.error("Paint crashed on file: " + pngFiles.get(i));
-                    Logger.log.info(InputToString(stdError));
                 } else {
                     Logger.log.info("Paint successfully open " + pngFiles.get(i));
                     h1.destroy();
